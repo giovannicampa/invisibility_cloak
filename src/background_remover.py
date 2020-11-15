@@ -70,7 +70,7 @@ print(key)
 plt.connect("button_press_event", area_selection_callback)
 plt.show()
 
-# print("y min {}, y max {}, x min {}, x max {}".format(y_coords[0], y_coords[1], x_coords[0], x_coords[1]))
+print("y {}, x {}".format(y_coords, x_coords))
 
 area_of_interest = image[y_coords[0]:y_coords[1], x_coords[0]: x_coords[1],:]
 
@@ -111,17 +111,31 @@ def range_limits(input_value, n_sigmas = 1):
     return value_lower, value_upper
 
 
-hue_lower, hue_upper = range_limits(area_of_interes_hsv[:,:,0], n_sigmas = 2)
-value_lower, value_upper = range_limits(area_of_interes_hsv[:,:,1], n_sigmas = 2)
-saturation_lower, saturation_upper = range_limits(area_of_interes_hsv[:,:,2], n_sigmas = 2)
+hue_lower, hue_upper = range_limits(area_of_interes_hsv[:,:,0], n_sigmas = 3)
+value_lower, value_upper = range_limits(area_of_interes_hsv[:,:,1], n_sigmas = 3)
+saturation_lower, saturation_upper = range_limits(area_of_interes_hsv[:,:,2], n_sigmas = 3)
 
 
 lower_bound = np.array([hue_lower, value_lower, saturation_lower])
 upper_bound = np.array([hue_upper, value_upper, saturation_upper])
-mask_color = cv2.inRange(image_hsv, lower_bound, upper_bound)
 
-image_filtered = cv2.bitwise_not(image_hsv, image_hsv, mask = mask_color)
-image_filtered = cv2.cvtColor(image_filtered, cv2.COLOR_HSV2RGB)
-plt.imshow(image_filtered)
-plt.show()
+# Webcam stream. Interrupts when pressing esc
+cap = cv2.VideoCapture(0)
+while True:
+    _, frame = cap.read()
 
+    frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    mask_color = cv2.inRange(frame_hsv, lower_bound, upper_bound)
+
+    image_filtered = cv2.bitwise_not(frame, frame, mask = mask_color)
+    image_filtered = cv2.cvtColor(image_filtered, cv2.COLOR_HSV2RGB)
+
+    cv2.imshow("Image filtered", image_filtered)
+    cv2.imshow("Image original", frame)
+    k = cv2.waitKey(5) &0xFF
+    if k == 27: break
+
+
+cv2.destroyAllWindows()
+cap.release()
