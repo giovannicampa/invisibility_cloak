@@ -7,7 +7,7 @@ import cv2
 analyse_selected_area = False
 
 sigmas_hue = 3
-sigmas_value = 2
+sigmas_value = 5
 sigmas_saturation = 5
 
 
@@ -164,11 +164,11 @@ while True:
     mask_color = cv2.inRange(frame_hsv, lower_bound, upper_bound)       # Filter the HSV in the HSV range defined
 
     kernel = np.ones((5,5), np.uint8)
-    opening = cv2.morphologyEx(mask_color, cv2.MORPH_OPEN, kernel, iterations= 3)
+    opening = cv2.morphologyEx(mask_color, cv2.MORPH_OPEN, kernel, iterations= 1)
     closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel, iterations=1)
-
-    colored_pixels = mask_color == 255
-    not_colored_pixels = mask_color == 0
+    
+    colored_pixels = closing == 255
+    not_colored_pixels = closing == 0
 
     result = np.zeros(frame.shape)
 
