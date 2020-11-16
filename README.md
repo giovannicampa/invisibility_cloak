@@ -18,16 +18,17 @@ A second frame captured with the **esc** key is then used to select the area tha
 This is done with a rectangle selection on the frane as shown below. For the selected area the median values for each of the hue, saturation and value ranges are calculated.
 A range around the median values is created by adding and subtracting n times the standard deviation of the value distibution.
 
-By setting the *analyse_selected_area* flag to true, a plot showing the distribution of the hue, saturation, value distributions of the selected area is generated.
+By setting the *analyse_selected_area* flag to true, a plot showing the distribution of the hue, saturation, value distributions of the selected area is generated. Here the HSV ranges that will be substituted can be seen. They are defined as the area between the vertical lines of the same color of the distribution.
+
 <p align="left">
-  <img src="https://github.com/giovannicampa/invisibility_cloak/blob/master/images/color_to_filter.png" width="400">
-  <img src="https://github.com/giovannicampa/invisibility_cloak/blob/master/images/hsv_distribution.png" width="650">
+  <img src="https://github.com/giovannicampa/invisibility_cloak/blob/master/images/color_to_filter.png" width="450">
+  <img src="https://github.com/giovannicampa/invisibility_cloak/blob/master/images/hsv_distribution.png" width="450">
 </p>
 
 ### 3. Pixel substitution
-The current frame is processed by creating a 2d array of logic values, indicating the pixels that fall in the Hue-Saturation-Value values defined.
+The current frame is processed by creating a 2d array of logic values, that indicates the pixels that fall in the Hue-Saturation-Value ranges defined.
+Logical indexing is used to fill a blank image with the pixels of the current frame and the original image.
 
-## Results
 The image below shows a frame of the webcam stream with the removed colors. The pixels belonging to the yoga mat, whose color was selected, are substituted with corresponding ones of the original background image.
 
 <p align="left">
