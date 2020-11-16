@@ -6,7 +6,7 @@ import cv2
 
 analyse_selected_area = False
 
-sigmas_hue = 2
+sigmas_hue = 3
 sigmas_value = 2
 sigmas_saturation = 5
 
@@ -54,19 +54,32 @@ def range_limits(input_value, n_sigmas = 1):
 
 cap = cv2.VideoCapture(0) # Get webcam stream
 
-# Webcam stream. Interrupts when pressing esc
+
+# Webcam stream for the capture of the background image
 while True:
     _, frame = cap.read()
 
-    cv2.imshow("frame", frame)
+    cv2.imshow("Original background", frame)
 
     k = cv2.waitKey(5) &0xFF
     if k == 27: break
+
+cv2.destroyAllWindows()
 
 # This is the image we are going to substitute to the filtered areas
 original_background = frame.copy()
 original_plot = cv2.cvtColor(original_background.copy(), cv2.COLOR_BGR2RGB)
 cv2.cvtColor(original_background, cv2.COLOR_RGB2HSV)
+
+
+# Webcam stream. Interrupts when pressing esc
+while True:
+    _, frame = cap.read()
+
+    cv2.imshow("Color to filter", frame)
+
+    k = cv2.waitKey(5) &0xFF
+    if k == 27: break
 
 cv2.destroyAllWindows()
 cap.release()
