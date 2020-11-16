@@ -4,11 +4,11 @@ from matplotlib.widgets import RectangleSelector
 import cv2
 
 
-analyse_selected_area = True
+analyse_selected_area = False
 
-sigmas_hue = 1
+sigmas_hue = 2
 sigmas_value = 2
-sigmas_saturation = 3
+sigmas_saturation = 5
 
 
 # -----------------------------------------------------------------------------------------
@@ -65,6 +65,8 @@ while True:
 
 # This is the image we are going to substitute to the filtered areas
 original_background = frame.copy()
+original_plot = cv2.cvtColor(original_background.copy(), cv2.COLOR_BGR2RGB)
+cv2.cvtColor(original_background, cv2.COLOR_RGB2HSV)
 
 cv2.destroyAllWindows()
 cap.release()
@@ -144,24 +146,25 @@ upper_bound = np.array([hue_upper, value_upper, saturation_upper])
 cap = cv2.VideoCapture(0)
 while True:
     _, frame = cap.read()
-    image_original = frame.copy()
 
-    frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)                  # Convert to Hue Saturation Value
+    frame_hsv = cv2.cvtColor(frame.copy(), cv2.COLOR_BGR2HSV)           # Convert to Hue Saturation Value
     mask_color = cv2.inRange(frame_hsv, lower_bound, upper_bound)       # Filter the HSV in the HSV range defined
-    # image_filtered = cv2.bitwise_not(frame, frame, mask = mask_color)   # 
 
     kernel = np.ones((5,5), np.uint8)
-
     opening = cv2.morphologyEx(mask_color, cv2.MORPH_OPEN, kernel, iterations= 3)
     closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, kernel, iterations=1)
 
-    cv2.bitwise_not(frame, frame, mask = closing)   # 
+    colored_pixels = mask_color == 255
+    not_colored_pixels = mask_color == 0
 
-    oringinal_blob = cv2.bitwise_and(original_background.copy(), original_background.copy(), mask = mask_color)
+    result = np.zeros(frame.shape)
 
-    cv2.imshow("Image filtered", frame)
-    cv2.imshow("Original blobs", oringinal_blob)
-    # cv2.imshow("Image original", image_original)
+    result[colored_pixels] = original_background[colored_pixels]
+    result[not_colored_pixels] = frame[not_colored_pixels]
+
+    result = result/255
+
+    cv2.imshow("result", result)
     k = cv2.waitKey(5) &0xFF
     if k == 27: break
 
