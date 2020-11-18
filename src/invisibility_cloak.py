@@ -4,12 +4,15 @@ from matplotlib.widgets import RectangleSelector
 import cv2
 
 
-analyse_selected_area = False
+analyse_selected_area = True
 
 sigmas_hue = 3
 sigmas_value = 5
 sigmas_saturation = 5
 
+
+plt.rc('figure', titlesize=18)                  # fontsize of the figure title
+plt.rcParams.update({'axes.titlesize': 18})     # fontsize of the subplot title
 
 # -----------------------------------------------------------------------------------------
 # Functions
